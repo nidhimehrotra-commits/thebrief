@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>The Brief — Daily Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f6f1e7;--paper2:#ede7d9;--ink:#1a1814;--ink2:#363228;--mid:#7a6e5c;--rule:#c8bca8;--accent:#8b2020;--accent2:#1a4a2e;--accent3:#1a2e4a;--gold:#9a7010;--sport:#1a3a4a;--env:#1a3a1a;--w:740px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Libre Baskerville',serif;font-size:16px;line-height:1.7;min-height:100vh}
+#rp{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:999;transition:width .1s;width:0}
+.mast{border-bottom:3px double var(--ink);padding:1.2rem 1.5rem 1rem;text-align:center;background:var(--paper)}
+.mast-top{display:flex;justify-content:space-between;align-items:center;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mid);margin-bottom:.7rem;letter-spacing:.05em}
+.mast h1{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,9vw,4.8rem);font-weight:900;letter-spacing:-.02em;line-height:1;color:var(--ink);margin-bottom:.2rem}
+.mast-rule{display:flex;align-items:center;gap:.7rem;margin:.4rem 0;justify-content:center}
+.mast-rule span{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);white-space:nowrap}
+.rule-line{flex:1;height:1px;background:var(--rule);max-width:70px}
+.ed-bar{display:flex;justify-content:center;gap:1.5rem;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mid);margin-top:.4rem;flex-wrap:wrap}
+.nav{border-bottom:1px solid var(--rule);border-top:1px solid var(--rule);padding:.4rem 1rem;display:flex;gap:0;overflow-x:auto;background:var(--paper);-webkit-overflow-scrolling:touch;scrollbar-width:none;position:sticky;top:0;z-index:50}
+.nav::-webkit-scrollbar{display:none}
+.nb{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);background:none;border:none;padding:.4rem .8rem;cursor:pointer;white-space:nowrap;border-right:1px solid var(--rule);transition:all .15s}
+.nb:last-child{border-right:none}
+.nb:hover,.nb.active{color:var(--accent);background:var(--paper2)}
+.arc{border-bottom:1px solid var(--rule);padding:.5rem 1.5rem;display:flex;align-items:center;gap:.7rem;background:var(--paper2);flex-wrap:wrap}
+.arc-lbl{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);white-space:nowrap}
+.arc-dates{display:flex;gap:.35rem;flex-wrap:wrap}
+.arc-d{font-family:'DM Mono',monospace;font-size:.65rem;padding:.18rem .55rem;border:1px solid var(--rule);border-radius:2px;cursor:pointer;background:var(--paper);color:var(--ink2);transition:all .15s}
+.arc-d:hover,.arc-d.cur{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.main{max-width:var(--w);margin:0 auto;padding:0 1.5rem 4rem}
+.ld{min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:2rem;text-align:center}
+.ld-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;color:var(--mid);animation:flick 1.8s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:1}50%{opacity:.35}}
+.ld-dots{display:flex;gap:.4rem}
+.ld-dots span{width:6px;height:6px;border-radius:50%;background:var(--ink);animation:db 1.2s ease-in-out infinite}
+.ld-dots span:nth-child(2){animation-delay:.2s}
+.ld-dots span:nth-child(3){animation-delay:.4s}
+@keyframes db{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1);opacity:1}}
+.ld-src{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--mid);line-height:1.9;max-width:340px}
+.top-line{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.9rem 0;margin:1.2rem 0;text-align:center}
+.top-line-lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);margin-bottom:.35rem}
+.top-line-text{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:var(--ink2);max-width:540px;margin:0 auto;line-height:1.5}
+.sec-head{border-top:3px solid var(--ink);border-bottom:1px solid var(--rule);padding:.7rem 0;margin:2.2rem 0 1.2rem;display:flex;align-items:baseline;gap:.8rem}
+.sec-num{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);letter-spacing:.1em}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;letter-spacing:-.01em}
+.sec-count{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);margin-left:auto}
+.story{border-bottom:1px solid var(--rule);padding:1.3rem 0;animation:fi .4s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.story:last-of-type{border-bottom:none}
+.s-meta{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem;flex-wrap:wrap}
+.s-tag{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.13rem .45rem;border-radius:1px;background:var(--ink);color:var(--paper)}
+.s-tag.geo{background:var(--accent3)}.s-tag.india{background:#4a2a08}.s-tag.eco{background:var(--accent2)}.s-tag.tech{background:#2a1a4a}.s-tag.biz{background:var(--gold)}.s-tag.sport{background:var(--sport)}.s-tag.culture{background:var(--accent)}.s-tag.env{background:var(--env)}
+.s-src{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid)}
+.s-src a{color:var(--accent);text-decoration:none}
+.s-src a:hover{text-decoration:underline}
+.s-head{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.35;margin-bottom:.45rem;color:var(--ink)}
+.s-head a{color:var(--ink);text-decoration:none}
+.s-head a:hover{color:var(--accent)}
+.s-body{font-size:.9rem;color:var(--ink2);line-height:1.75;margin-bottom:.6rem}
+.s-why{display:flex;gap:.45rem;background:var(--paper2);border-left:2px solid var(--ink);padding:.55rem .75rem;font-size:.83rem;color:var(--ink2);line-height:1.55;margin-bottom:.6rem}
+.s-why-lbl{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);white-space:nowrap;padding-top:2px;flex-shrink:0}
+.ib-c{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:var(--accent2);border:1px solid var(--accent2);padding:.12rem .45rem;border-radius:2px;margin:.15rem .2rem .15rem 0}
+.s-link{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--accent);text-decoration:none;letter-spacing:.04em}
+.s-link:hover{text-decoration:underline}
+.think{background:var(--ink);color:var(--paper);padding:1.1rem 1.3rem;margin:1.3rem 0 0;border-radius:2px}
+.think-lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(245,241,231,.5);margin-bottom:.45rem}
+.think-q{font-family:'Playfair Display',serif;font-style:italic;font-size:.98rem;line-height:1.5;margin-bottom:.85rem;color:var(--paper)}
+.think-ta{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);color:var(--paper);font-family:'Libre Baskerville',serif;font-size:.86rem;padding:.75rem;border-radius:2px;resize:vertical;min-height:75px;line-height:1.6}
+.think-ta::placeholder{color:rgba(245,241,231,.3)}
+.think-ta:focus{outline:none;border-color:rgba(255,255,255,.45)}
+.think-row{display:flex;justify-content:space-between;align-items:center;margin-top:.6rem;flex-wrap:wrap;gap:.4rem}
+.think-save{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.06em;background:var(--paper);color:var(--ink);border:none;padding:.45rem .9rem;cursor:pointer;border-radius:2px;transition:opacity .15s}
+.think-save:hover{opacity:.85}
+.think-note{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(245,241,231,.4)}
+.think-note.saved{color:rgba(140,210,160,.8)}
+.closing{border-top:3px double var(--ink);padding:1.3rem 0;text-align:center;margin-top:2rem}
+.closing-lbl{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);margin-bottom:.5rem}
+.closing-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;color:var(--ink2);max-width:480px;margin:0 auto;line-height:1.6}
+.err{border:1px solid var(--rule);padding:1.8rem;text-align:center;margin:2rem 0;background:var(--paper2);border-radius:4px}
+.err h3{font-family:'Playfair Display',serif;font-size:1.05rem;margin-bottom:.4rem}
+.err p{font-size:.84rem;color:var(--mid);margin-bottom:.9rem;line-height:1.6}
+.retry{font-family:'DM Mono',monospace;font-size:.68rem;background:var(--ink);color:var(--paper);border:none;padding:.55rem 1.1rem;cursor:pointer;letter-spacing:.06em;margin:.3rem}
+/* SETUP */
+.setup-overlay{position:fixed;inset:0;background:rgba(26,24,20,.95);z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem}
+.setup-box{background:var(--paper);border-radius:8px;padding:2rem;max-width:420px;width:100%}
+.setup-box h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.4rem}
+.setup-box p{font-size:.85rem;color:var(--mid);line-height:1.6;margin-bottom:1.2rem}
+.setup-input{width:100%;border:1px solid var(--rule);border-radius:4px;padding:.75rem;font-family:'Libre Baskerville',serif;font-size:.9rem;background:var(--paper2);color:var(--ink);outline:none;margin-bottom:.8rem}
+.setup-input:focus{border-color:var(--accent)}
+.setup-btn{width:100%;background:var(--ink);color:var(--paper);border:none;border-radius:4px;padding:.85rem;font-family:'DM Mono',monospace;font-size:.8rem;letter-spacing:.08em;cursor:pointer;transition:background .15s}
+.setup-btn:hover{background:var(--accent)}
+.setup-note{font-size:.72rem;color:var(--mid);margin-top:.8rem;line-height:1.5;text-align:center}
+.setup-note a{color:var(--accent)}
+.foot{border-top:3px double var(--ink);padding:1.5rem;text-align:center;max-width:var(--w);margin:0 auto}
+.foot-src{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--mid);line-height:1.9}
+.foot-btns{margin-top:.9rem;display:flex;justify-content:center;gap:.7rem;flex-wrap:wrap}
+.foot-btn{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.06em;padding:.45rem .9rem;border:1px solid var(--rule);background:var(--paper);color:var(--ink2);cursor:pointer;border-radius:2px;transition:all .15s}
+.foot-btn:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.no-stories{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--mid);padding:1rem 0;font-style:italic}
+@media(max-width:580px){.mast h1{font-size:2.6rem}.sec-count{display:none}.mast-top{flex-direction:column;gap:.25rem;text-align:center}.ed-bar span:not(:first-child){display:none}}
+</style>
+</head>
+<body>
+<div id="rp"></div>
+
+<!-- API KEY SETUP OVERLAY -->
+<div class="setup-overlay" id="setupOverlay" style="display:none">
+  <div class="setup-box">
+    <h2>One-time setup</h2>
+    <p>The Brief uses GNews to fetch real stories. Enter your free GNews API key below — you only need to do this once.</p>
+    <input class="setup-input" id="apiKeyInput" type="text" placeholder="Paste your GNews API key here…" autocomplete="off">
+    <button class="setup-btn" onclick="saveApiKey()">Save key and start →</button>
+    <div class="setup-note">
+      Get a free key at <a href="https://gnews.io" target="_blank">gnews.io</a> — takes 2 minutes, no credit card.
+    </div>
+  </div>
+</div>
+
+<div class="mast">
+  <div class="mast-top">
+    <span id="mastDate">—</span>
+    <span id="mastEdNum">Edition #1</span>
+  </div>
+  <h1>The Brief</h1>
+  <div class="mast-rule"><div class="rule-line"></div><span>Daily Intelligence for IB Students</span><div class="rule-line"></div></div>
+  <div class="ed-bar">
+    <span>World Affairs</span><span>·</span><span>Economics</span><span>·</span><span>Technology</span><span>·</span><span>Business</span><span>·</span><span>Sport &amp; Culture</span>
+  </div>
+</div>
+<div class="nav">
+  <button class="nb active" onclick="goTo('sec-world',this)">I. The World</button>
+  <button class="nb" onclick="goTo('sec-eco',this)">II. Economics</button>
+  <button class="nb" onclick="goTo('sec-tech',this)">III. Tech &amp; Env</button>
+  <button class="nb" onclick="goTo('sec-biz',this)">IV. Business</button>
+  <button class="nb" onclick="goTo('sec-sport',this)">V. Sport &amp; Culture</button>
+  <button class="nb" onclick="goTo('sec-think',this)">VI. Think</button>
+</div>
+<div class="arc">
+  <span class="arc-lbl">Archive →</span>
+  <div class="arc-dates" id="arcDates"></div>
+</div>
+<div class="main" id="mainContent">
+  <div class="ld">
+    <div class="ld-title">Gathering today's stories…</div>
+    <div class="ld-dots"><span></span><span></span><span></span></div>
+    <div class="ld-src">Reuters · BBC · The Hindu · FT · Economist<br>MIT Tech Review · Forbes · ESPN · Dezeen &amp; more</div>
+  </div>
+</div>
+<div class="foot" id="mainFoot" style="display:none">
+  <div class="foot-src">
+    All stories sourced via GNews from established publications including Reuters, BBC, AP, New York Times, The Hindu, Financial Times, The Economist, Forbes, MIT Technology Review, ESPN, and more. Always read the original article.
+  </div>
+  <div class="foot-btns">
+    <button class="foot-btn" onclick="copyLink()">📋 Copy link to share</button>
+    <button class="foot-btn" onclick="window.print()">🖨 Print edition</button>
+    <button class="foot-btn" onclick="changeKey()">🔑 Change API key</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const API_KEY_STORAGE = 'thebrief_gnews_key';
+const ED_KEY = 'thebrief_gnews_v1_eds';
+const RESP_KEY = 'thebrief_gnews_v1_resp';
+const TTL = 6 * 60 * 60 * 1000; // 6 hours cache
+const DEFAULT_KEY = '6eacde9ea7bef884f290dd0e24e6cac7';
+
+// GNews API endpoint
+const GNEWS = 'https://gnews.io/api/v4';
+
+// Section queries — what to search for in GNews
+const SECTIONS = [
+  {
+    id: 'world', title: 'The World Today',
+    queries: ['world politics', 'international relations India', 'geopolitics'],
+    tag: 'WORLD', style: 'geo', sec: 'world',
+    prompt_pool: [
+      'Pick one story. If you were advising the government involved, what would you do differently — and what would you sacrifice to do it?',
+      'Which story here will matter most in five years? Make the case.',
+      'Find the tension in one story — two legitimate interests in conflict. Whose side are you on, and why?',
+      'Who has power in one of these stories, and why? What would change that?',
+    ]
+  },
+  {
+    id: 'eco', title: 'Economics in the Real World',
+    queries: ['global economy trade', 'India economy policy', 'central bank inflation'],
+    tag: 'ECONOMICS', style: 'eco', sec: 'economics',
+    prompt_pool: [
+      'If you were India\'s Finance Minister today, what single decision would you make based on what you\'ve read?',
+      'Who benefits and who loses from the economic development described here? Is that fair?',
+      'Where do you see the gap between economic theory and what\'s actually happening?',
+      'What would have to change for this economic situation to look different in two years?',
+    ]
+  },
+  {
+    id: 'tech', title: 'Technology & Environment',
+    queries: ['artificial intelligence technology', 'climate change environment', 'science breakthrough'],
+    tag: 'TECHNOLOGY', style: 'tech', sec: 'tech',
+    prompt_pool: [
+      'If you had to regulate the technology described here, what one rule would you introduce — and what unintended consequence might follow?',
+      'Is this development good for humanity overall? Build the strongest case for both sides.',
+      'How would this look different if it were happening in India versus the US or Europe?',
+      'What is being lost as well as gained here? Is the trade-off worth it?',
+    ]
+  },
+  {
+    id: 'biz', title: 'Business Move of the Day',
+    queries: ['business strategy company merger', 'India startup entrepreneur', 'corporate decision'],
+    tag: 'BUSINESS', style: 'biz', sec: 'business',
+    prompt_pool: [
+      'Was this the right business decision? Make the case for and against.',
+      'If you were a rival watching this move, what would you do next?',
+      'At what point does a business decision become an ethical one? Does this story cross that line?',
+      'What does this tell you about how this industry actually works — not how it\'s supposed to?',
+    ]
+  },
+  {
+    id: 'sport', title: 'Sport & Culture',
+    queries: ['cricket India sport', 'design architecture culture', 'film art'],
+    tag: 'SPORT', style: 'sport', sec: 'sport',
+    prompt_pool: [
+      'Where does sport end and business begin in this story? Does that distinction still matter?',
+      'What does this sports or culture story reveal about the society it\'s happening in?',
+      'Is money changing this field for better or worse? Defend your answer.',
+      'If you ran this organisation, what would your first decision be?',
+    ]
+  },
+];
+
+// IB concept mapping
+const IB_MAP = [
+  {kw:['inflation','price','cpi','cost of living'],c:['Inflation','Monetary policy']},
+  {kw:['interest rate','central bank','fed ','rbi'],c:['Monetary policy','Exchange rates']},
+  {kw:['trade','export','import','tariff'],c:['International trade','Comparative advantage']},
+  {kw:['gdp','economic growth','recession'],c:['Economic growth','Business cycle']},
+  {kw:['unemployment','jobs','labour'],c:['Unemployment','Aggregate demand']},
+  {kw:['climate','carbon','emission','fossil'],c:['Negative externalities','Market failure']},
+  {kw:['renewable','solar','wind','energy transition'],c:['Sustainability','Resource allocation']},
+  {kw:['war','conflict','nato','sanction'],c:['Interdependence','Sovereignty']},
+  {kw:['election','government','fiscal','parliament'],c:['Fiscal policy','Political economy']},
+  {kw:['ai ','artificial intelligence','machine learning'],c:['Technological change','Creative destruction']},
+  {kw:['startup','entrepreneur','venture'],c:['Entrepreneurship','Market structure']},
+  {kw:['merger','acquisition','monopoly'],c:['Market structure','Competitive advantage']},
+  {kw:['inequality','poverty','development'],c:['Income distribution','Development economics']},
+];
+
+function getIBC(text){
+  const l=(text||'').toLowerCase();
+  for(const e of IB_MAP) if(e.kw.some(k=>l.includes(k))) return e.c;
+  return [];
+}
+
+function whyMatters(sec, title, desc){
+  const t=((title||'')+(desc||'')).toLowerCase();
+  if(sec==='world'){
+    if(t.includes('india')) return "Directly relevant to India's place in the world — its foreign policy, trade, and diplomacy. Ask: how does this affect India's interests?";
+    if(t.includes('trade')||t.includes('sanction')) return 'Trade and sanctions reshape economies and alliances. Connects to IB Economics: international trade theory and protectionism.';
+    if(t.includes('climate')||t.includes('environment')) return 'Global environmental governance affects every economy. Connects to IB ESS: international climate frameworks.';
+    return 'Global events shape the world you will work in. Ask: who has power here, why do they have it, and what might change that?';
+  }
+  if(sec==='economics'){
+    if(t.includes('inflation')||t.includes('rate')) return 'Central bank decisions affect borrowing, exchange rates, and growth globally. Core IB Economics: monetary policy transmission.';
+    if(t.includes('trade')||t.includes('export')) return 'Trade policy determines which industries grow. Connects to IB: comparative advantage and the case for and against protectionism.';
+    return 'Real economic decisions diverge from textbook models in interesting ways. Watch where reality departs from theory — that\'s where the insight lives.';
+  }
+  if(sec==='tech'){
+    if(t.includes('ai')||t.includes('artificial')) return 'AI is restructuring labour markets faster than policy can respond. IB Economics: technological change and creative destruction.';
+    if(t.includes('climate')||t.includes('carbon')) return 'Climate action has direct economic trade-offs. IB ESS: mitigation strategies. IB Economics: externalities and market failure.';
+    return 'Technology and environment are the two forces most reshaping the world your generation will inherit. Understanding them now is not optional.';
+  }
+  if(sec==='business') return 'Real business decisions illustrate strategy and market forces better than any case study. Ask: what were the alternatives, and why did they choose this?';
+  return 'Sport and culture sit at the intersection of economics, politics, and identity. The business of both is worth understanding.';
+}
+
+function getRandPrompt(sec){
+  const s = SECTIONS.find(x=>x.id===sec);
+  const pool = s ? s.prompt_pool : SECTIONS[0].prompt_pool;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+// ── STORAGE ──
+function getKey(){ return localStorage.getItem(API_KEY_STORAGE)||DEFAULT_KEY; }
+function saveKey(k){ localStorage.setItem(API_KEY_STORAGE, k); }
+function loadEds(){ try{return JSON.parse(localStorage.getItem(ED_KEY)||'{}')}catch{return{}} }
+function saveEd(dk,d){ try{const e=loadEds();e[dk]=d;const k=Object.keys(e).sort().slice(-14);const t={};k.forEach(x=>t[x]=e[x]);localStorage.setItem(ED_KEY,JSON.stringify(t))}catch{} }
+function loadResp(){ try{return JSON.parse(localStorage.getItem(RESP_KEY)||'{}')}catch{return{}} }
+function saveResp(dk,sid,txt){ try{const r=loadResp();if(!r[dk])r[dk]={};r[dk][sid]=txt;localStorage.setItem(RESP_KEY,JSON.stringify(r))}catch{} }
+
+// ── DATE ──
+function todayKey(){ return new Date().toISOString().split('T')[0]; }
+function fmtFull(dk){ return new Date(dk+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }
+function fmtShort(dk){ return new Date(dk+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }
+function edNum(dk){ return Math.max(1,Math.floor((new Date(dk+'T12:00:00')-new Date('2026-06-08T12:00:00'))/86400000)+1); }
+
+// ── API KEY SETUP ──
+function checkSetup(){
+  const k = getKey();
+  if(!k){ document.getElementById('setupOverlay').style.display='flex'; return false; }
+  return true;
+}
+
+function saveApiKey(){
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if(!k){ alert('Please paste your GNews API key'); return; }
+  saveKey(k);
+  document.getElementById('setupOverlay').style.display='none';
+  loadDate(todayKey());
+}
+
+function changeKey(){
+  document.getElementById('apiKeyInput').value = getKey();
+  document.getElementById('setupOverlay').style.display='flex';
+}
+
+// ── GNEWS FETCH ──
+async function fetchSection(sec){
+  const key = getKey();
+  const query = sec.queries[Math.floor(Math.random()*sec.queries.length)];
+  const url = `${GNEWS}/search?q=${encodeURIComponent(query)}&lang=en&max=6&apikey=${key}`;
+  const r = await fetch(url, {signal: AbortSignal.timeout(12000)});
+  if(!r.ok){
+    if(r.status===403||r.status===401) throw new Error('invalid_key');
+    throw new Error('API '+r.status);
+  }
+  const d = await r.json();
+  return (d.articles||[]).slice(0,4).map(a=>({
+    headline: a.title||'',
+    link: a.url||'',
+    summary: (a.description||'').slice(0,280),
+    source: a.source?.name||'',
+    source_url: a.source?.url||'',
+    tag: sec.tag,
+    style: sec.style,
+  })).filter(i=>i.headline);
+}
+
+async function buildEdition(dk){
+  const results = await Promise.allSettled(SECTIONS.map(s=>fetchSection(s)));
+  const data = { date: dk, fetched_at: Date.now() };
+  results.forEach((r,i)=>{
+    data[SECTIONS[i].id] = r.status==='fulfilled' ? r.value : [];
+  });
+  return data;
+}
+
+// ── RENDER ──
+function renderStory(item, sec, idx){
+  const ibc = getIBC(item.headline+' '+item.summary);
+  const why = whyMatters(sec, item.headline, item.summary);
+  const head = item.link ? `<a href="${item.link}" target="_blank" rel="noopener">${item.headline}</a>` : item.headline;
+  return `<div class="story" style="animation-delay:${idx*.07}s">
+    <div class="s-meta">
+      <span class="s-tag ${item.style}">${item.tag}</span>
+      <span class="s-src">${item.source_url?`<a href="${item.source_url}" target="_blank" rel="noopener">${item.source}</a>`:item.source}</span>
+    </div>
+    <h3 class="s-head">${head}</h3>
+    ${item.summary?`<div class="s-body">${item.summary}${item.summary.length>=278?'…':''}</div>`:''}
+    <div class="s-why"><span class="s-why-lbl">Why it matters</span><span>${why}</span></div>
+    ${ibc.length?`<div>${ibc.map(c=>`<span class="ib-c">IB: ${c}</span>`).join('')}</div>`:''}
+    ${item.link?`<div style="margin-top:.5rem"><a class="s-link" href="${item.link}" target="_blank" rel="noopener">Read full story →</a></div>`:''}
+  </div>`;
+}
+
+function renderThink(secId, dk){
+  const prompt = getRandPrompt(secId);
+  const saved = (loadResp()[dk]||{})[secId]||'';
+  return `<div class="think">
+    <div class="think-lbl">Think about it →</div>
+    <div class="think-q">${prompt}</div>
+    <textarea class="think-ta" id="ta-${secId}" placeholder="Write your thinking here — no right answer, just yours…">${saved}</textarea>
+    <div class="think-row">
+      <button class="think-save" onclick="saveTR('${dk}','${secId}')">Save response</button>
+      <span class="think-note ${saved?'saved':''}" id="tn-${secId}">${saved?'✓ Saved':'Saved privately on this device'}</span>
+    </div>
+  </div>`;
+}
+
+function renderEdition(data, dk){
+  document.getElementById('mastDate').textContent = fmtFull(dk).toUpperCase();
+  document.getElementById('mastEdNum').textContent = `EDITION #${edNum(dk)}`;
+
+  const romans = ['I','II','III','IV','V'];
+  let html = '';
+
+  // Top line
+  const first = (data[SECTIONS[0].id]||[])[0];
+  if(first){
+    html += `<div class="top-line"><div class="top-line-lbl">Today in brief</div><div class="top-line-text">${first.headline}</div></div>`;
+  }
+
+  SECTIONS.forEach((sec,si)=>{
+    const items = (data[sec.id]||[]).filter(i=>i.headline);
+    html += `<div id="sec-${sec.id}">
+      <div class="sec-head">
+        <span class="sec-num">${romans[si]}.</span>
+        <span class="sec-title">${sec.title}</span>
+        <span class="sec-count">${items.length} stor${items.length===1?'y':'ies'}</span>
+      </div>`;
+    if(!items.length){
+      html += `<div class="no-stories">No stories loaded for this section — try refreshing.</div>`;
+    } else {
+      items.forEach((item,idx)=>{ html += renderStory(item, sec.sec, idx); });
+    }
+    html += renderThink(sec.id, dk);
+    html += `</div>`;
+  });
+
+  html += `<div id="sec-think" class="closing">
+    <div class="closing-lbl">To carry through the day</div>
+    <div class="closing-text">The news is not what happened. It is the first draft of why it happened — and the second draft is yours to write.</div>
+  </div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+  document.getElementById('mainFoot').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+// ── LOAD ──
+let curDate = todayKey();
+
+function showLoading(){
+  document.getElementById('mainContent').innerHTML = `<div class="ld"><div class="ld-title">Gathering today's stories…</div><div class="ld-dots"><span></span><span></span><span></span></div><div class="ld-src">Searching across Reuters · BBC · The Hindu<br>FT · Economist · MIT Tech Review · Forbes · ESPN</div></div>`;
+  document.getElementById('mainFoot').style.display = 'none';
+}
+
+async function loadDate(dk){
+  if(!checkSetup()) return;
+  curDate = dk;
+  renderArchive(dk);
+
+  const eds = loadEds();
+  const cached = eds[dk];
+  const fresh = cached && (Date.now()-(cached.fetched_at||0)) < TTL;
+  if(fresh){ renderEdition(cached, dk); return; }
+
+  showLoading();
+  try {
+    const data = await buildEdition(dk);
+    const total = SECTIONS.reduce((n,s)=>n+(data[s.id]||[]).length, 0);
+    if(total === 0) throw new Error('no_stories');
+    saveEd(dk, data);
+    renderEdition(data, dk);
+  } catch(e){
+    console.error(e);
+    if(e.message === 'invalid_key'){
+      document.getElementById('mainContent').innerHTML = `<div class="err"><h3>API key not recognised</h3><p>Your GNews API key didn't work. Please check it and try again.</p><button class="retry" onclick="changeKey()">Update API key</button></div>`;
+      return;
+    }
+    if(cached){ renderEdition(cached, dk); return; }
+    document.getElementById('mainContent').innerHTML = `<div class="err"><h3>The press is temporarily offline</h3><p>Could not load stories. Check your connection and try again.</p><button class="retry" onclick="loadDate('${dk}')">Try again</button></div>`;
+  }
+}
+
+function renderArchive(curDk){
+  const eds = loadEds(), today = todayKey();
+  const dates = [...new Set([today,...Object.keys(eds).sort().reverse()])].slice(0,10);
+  document.getElementById('arcDates').innerHTML = dates.map(d=>
+    `<div class="arc-d ${d===curDk?'cur':''}" onclick="loadDate('${d}')">${d===today?'Today':fmtShort(d)}</div>`
+  ).join('');
+}
+
+function saveTR(dk, sid){
+  const ta = document.getElementById(`ta-${sid}`);
+  if(!ta) return;
+  saveResp(dk, sid, ta.value);
+  const tn = document.getElementById(`tn-${sid}`);
+  if(tn){ tn.textContent='✓ Saved'; tn.classList.add('saved'); }
+}
+
+function goTo(id, btn){
+  const el = document.getElementById(id);
+  if(el){ window.scrollTo({top: el.getBoundingClientRect().top+window.scrollY-70, behavior:'smooth'}); }
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    const b=event.target; b.textContent='✓ Copied!';
+    setTimeout(()=>b.textContent='📋 Copy link to share',2000);
+  }).catch(()=>prompt('Copy this link:', window.location.href));
+}
+
+window.addEventListener('scroll',()=>{
+  const total = document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('rp').style.width = (total>0?(window.scrollY/total)*100:0)+'%';
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  renderArchive(todayKey());
+  if(checkSetup()) loadDate(todayKey());
+});
+</script>
+</body>
+</html>
