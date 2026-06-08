@@ -1,0 +1,7 @@
+{
+  "name": "thebrief",
+  "version": "1.0.0",
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.10"
+  }
+}
