@@ -294,11 +294,7 @@ function fmtShort(dk){ return new Date(dk+'T12:00:00').toLocaleDateString('en-GB
 function edNum(dk){ return Math.max(1,Math.floor((new Date(dk+'T12:00:00')-new Date('2026-06-08T12:00:00'))/86400000)+1); }
 
 // ── API KEY SETUP ──
-function checkSetup(){
-  const k = getKey();
-  if(!k){ document.getElementById('setupOverlay').style.display='flex'; return false; }
-  return true;
-}
+function checkSetup(){ return true; }
 
 function saveApiKey(){
   const k = document.getElementById('apiKeyInput').value.trim();
@@ -314,32 +310,24 @@ function changeKey(){
 }
 
 // ── GNEWS FETCH ──
-async function fetchSection(sec){
-  const key = getKey();
-  const query = sec.queries[Math.floor(Math.random()*sec.queries.length)];
-  const url = `${GNEWS}/search?q=${encodeURIComponent(query)}&lang=en&max=6&apikey=${key}`;
-  const r = await fetch(url, {signal: AbortSignal.timeout(12000)});
-  if(!r.ok){
-    if(r.status===403||r.status===401) throw new Error('invalid_key');
-    throw new Error('API '+r.status);
-  }
-  const d = await r.json();
-  return (d.articles||[]).slice(0,4).map(a=>({
-    headline: a.title||'',
-    link: a.url||'',
-    summary: (a.description||'').slice(0,280),
-    source: a.source?.name||'',
-    source_url: a.source?.url||'',
-    tag: sec.tag,
-    style: sec.style,
-  })).filter(i=>i.headline);
-}
-
 async function buildEdition(dk){
-  const results = await Promise.allSettled(SECTIONS.map(s=>fetchSection(s)));
+  const r = await fetch('/api/news', {signal: AbortSignal.timeout(15000)});
+  if(!r.ok) throw new Error('API ' + r.status);
+  const json = await r.json();
+  if(!json.ok) throw new Error('backend_error');
+  const raw = json.data || {};
   const data = { date: dk, fetched_at: Date.now() };
-  results.forEach((r,i)=>{
-    data[SECTIONS[i].id] = r.status==='fulfilled' ? r.value : [];
+  SECTIONS.forEach(sec => {
+    const articles = raw[sec.id] || [];
+    data[sec.id] = articles.map(a => ({
+      headline: a.headline || a.title || '',
+      link: a.link || a.url || '',
+      summary: (a.summary || a.description || '').slice(0, 280),
+      source: typeof a.source === 'string' ? a.source : (a.source?.name || ''),
+      source_url: a.source_url || (a.source?.url) || '',
+      tag: sec.tag,
+      style: sec.style,
+    })).filter(i => i.headline);
   });
   return data;
 }
